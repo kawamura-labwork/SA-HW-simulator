@@ -21,19 +21,19 @@ python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 123] [-d
 ```
 
 Model information
-|Option|Description|
-|:----:|:---------:|
-|`-i`|Model file (Only for (a))|
-|`-n`|#. of spins (Only for (b))|
+|Option|Description|Default|
+|:----:|:---------:|:-----:|
+|`-i`|Model file (Only for (a))|None|
+|`-n`|#. of spins (Only for (b))|256|
 
 Annealing parameters
-|Option|Description|
-|:----:|:---------:|
-|`-O`|#. of outer loops|
-|`-I`|#. of inner loops|
-|`-S`|Initial temperature|
-|`-E`|Final temperature|
-|`-s`|Seed value|
+|Option|Description|Default|
+|:----:|:---------:|:-----:|
+|`-O`|#. of outer loops|600|
+|`-I`|#. of inner loops|4000|
+|`-S`|Initial temperature|20.0|
+|`-E`|Final temperature|0.5|
+|`-s`|Seed value|123|
 
 Other options
 |Option|Description|
