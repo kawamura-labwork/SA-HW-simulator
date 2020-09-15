@@ -56,6 +56,8 @@ Example
 3 3 -1
 ```
 
+<img width="441" alt="SampleModel" src="https://user-images.githubusercontent.com/71317410/93204943-eb67fa00-f791-11ea-979d-4eff8a8f2568.png">
+
 ## Output
 Example
 ```
