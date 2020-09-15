@@ -41,7 +41,7 @@ Other options
 |`-d`|Output a log file (`./energy.log`) recording energy transition|
 
 ## Input file format
-* The 1st line shows #. of spins
+* The 1st line shows #. of spins.
 * **J** and **h** are specified from the 2nd line.
 * Constant value is not supported.
 
@@ -69,7 +69,7 @@ Model file: G1_Ising.dat
  T(real) = 20.0 --> 0.500003628459082
  seed = 123
 ----------------------------------------
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 600/600 [00:43<00:00, 13.70it/s]
+100%|██████████████████████████████████████████████| 600/600 [00:43<00:00, 13.72it/s]
 ----------------------------------------
 -- Result ------------------------------
 ----------------------------------------
