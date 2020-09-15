@@ -83,4 +83,4 @@ Model file: G1_Ising.dat
 * `G1_Ising.dat` includes an Ising model transformed from the MAX-CUT problem `G1` (obtained [here](http://web.stanford.edu/~yyye/yyye/Gset/)).
 
 ## Acknowledgement
-The work is supported by the MITOU Target program from Information-technology Promotion Agency, Japan (IPA).
+This work is supported by the MITOU Target program from Information-technology Promotion Agency, Japan (IPA).
