@@ -1,4 +1,4 @@
-# SA-HW-simulator
+# SA HW simulator
 SA (Simulated Annealing) **HW (hardware)** simulator
 
 ## What's this?
