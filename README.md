@@ -1,9 +1,9 @@
-# SA HW simulator
-SA (Simulated Annealing) **HW (hardware)** simulator
+# HW simulator of SA
+**HW (hardware)** simulator of SA (Simulated Annealing)
 
 ## What's this?
 * **SA-based annealer**; ground-state-search processor of a fully-connected Ising model
-* **HW simulator** which imitates circuit behavior
+* **HW simulator** which imitates the behavior of HW annealer (*now under development*)
 * Including **HW-specific (or HW-friendly) operations** (fixed-point operations, approximated sigmoid operation, and pseudo random number generator)
 
 ## Requirements
@@ -81,3 +81,6 @@ Model file: G1_Ising.dat
 ```
 
 * `G1_Ising.dat` includes an Ising model transformed from the MAX-CUT problem `G1` (obtained [here](http://web.stanford.edu/~yyye/yyye/Gset/)).
+
+## Acknowledgement
+The work is supported by the MITOU Target program from Information-technology Promotion Agency, Japan (IPA).
