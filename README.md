@@ -1,9 +1,9 @@
-# SA HW simulator
-SA (Simulated Annealing) **HW (hardware)** simulator
+# HW simulator of SA
+**HW (hardware)** simulator of SA (Simulated Annealing)
 
 ## What's this?
 * **SA-based annealer**; ground-state-search processor of a fully-connected Ising model
-* **HW simulator** which imitates circuit behavior
+* **HW simulator** which imitates the behavior of HW annealer (*now under development*)
 * Including **HW-specific (or HW-friendly) operations** (fixed-point operations, approximated sigmoid operation, and pseudo random number generator)
 
 ## Requirements
@@ -12,12 +12,12 @@ SA (Simulated Annealing) **HW (hardware)** simulator
 ## How to use
 (a) Read in an Ising model from a file
 ```
-python3 simulator.py -i FILE [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 123] [-d]
+python3 simulator.py -i FILE [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
 ```
 
 (b) Generate a random model
 ```
-python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 123] [-d]
+python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
 ```
 
 Model information
@@ -33,7 +33,7 @@ Annealing parameters
 |`-I`|#. of inner loops|4000|
 |`-S`|Initial temperature|20.0|
 |`-E`|Final temperature|0.5|
-|`-s`|Seed value|123|
+|`-s`|Seed value|12345|
 
 Other options
 |Option|Description|
@@ -69,15 +69,18 @@ Model file: G1_Ising.dat
  #Loops  = 600 x 4000
  T(set)  = 20.0 --> 0.5
  T(real) = 20.0 --> 0.500003628459082
- seed = 123
+ seed = 12345
 ----------------------------------------
 100%|██████████████████████████████████████████████| 600/600 [00:43<00:00, 13.72it/s]
 ----------------------------------------
 -- Result ------------------------------
 ----------------------------------------
- H(init) = 202
+ H(init) = 118
  H(fin)  = -4072
 ----------------------------------------
 ```
 
 * `G1_Ising.dat` includes an Ising model transformed from the MAX-CUT problem `G1` (obtained [here](http://web.stanford.edu/~yyye/yyye/Gset/)).
+
+## Acknowledgement
+This work is supported by the MITOU Target program from Information-technology Promotion Agency, Japan (IPA).
