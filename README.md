@@ -12,12 +12,12 @@
 ## How to use
 (a) Read in an Ising model from a file
 ```
-python3 simulator.py -i FILE [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 123] [-d]
+python3 simulator.py -i FILE [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
 ```
 
 (b) Generate a random model
 ```
-python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 123] [-d]
+python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
 ```
 
 Model information
@@ -33,7 +33,7 @@ Annealing parameters
 |`-I`|#. of inner loops|4000|
 |`-S`|Initial temperature|20.0|
 |`-E`|Final temperature|0.5|
-|`-s`|Seed value|123|
+|`-s`|Seed value|12345|
 
 Other options
 |Option|Description|
@@ -69,13 +69,13 @@ Model file: G1_Ising.dat
  #Loops  = 600 x 4000
  T(set)  = 20.0 --> 0.5
  T(real) = 20.0 --> 0.500003628459082
- seed = 123
+ seed = 12345
 ----------------------------------------
 100%|██████████████████████████████████████████████| 600/600 [00:43<00:00, 13.72it/s]
 ----------------------------------------
 -- Result ------------------------------
 ----------------------------------------
- H(init) = 202
+ H(init) = 118
  H(fin)  = -4072
 ----------------------------------------
 ```
