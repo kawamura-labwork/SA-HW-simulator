@@ -21,7 +21,7 @@ def commandParsing():
 	parser.add_argument('-I', '--i_loop', type=int, default=4000)
 	parser.add_argument('-S', '--tmp_st', type=float, default=20.0)
 	parser.add_argument('-E', '--tmp_en', type=float, default=0.5)
-	parser.add_argument('-s', '--seed', type=int, default=123)
+	parser.add_argument('-s', '--seed', type=int, default=12345)
 	parser.add_argument('-d', '--debug', help='show process', action='store_true')
 	args = parser.parse_args()
 	return args
