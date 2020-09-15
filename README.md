@@ -42,7 +42,7 @@ Other options
 
 ## Input file format
 * The 1st line shows #. of spins.
-* **J** and **h** are specified from the 2nd line.
+* **J** and **h** are specified from the 2nd line (32bit integer)
 * Constant value is not supported.
 
 Example
