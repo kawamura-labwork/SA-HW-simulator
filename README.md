@@ -17,7 +17,7 @@
 |(3)|`03_ConstrainedSA_simulator_QUBO.py`|QUBO|Transition-constrained SA|
 
 * The simulator (3), transion-constrained SA, works in such a way as to always satisfy 1-dimensional one-hot constraints.
-* However, when switching to check mode by an option `-c`, it works in the same manner as the simulator (2).
+* When switching to check mode by an option `-c`, it works in the same manner as the simulator (2).
 
 ## How to use
 #### (a) Read in a pre-defined model from a file
@@ -33,6 +33,7 @@ python3 01_SA_simulator_Ising.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] 
 python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
+## Input argument
 #### Model information
 |Option|Description|Default|Support|
 |:----:|:---------|:-----:|:-----:|
@@ -90,7 +91,7 @@ python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] 
 2 3
 ```
 
-## Output example
+## Output examples
 
 #### Simulator (1)
 ```
