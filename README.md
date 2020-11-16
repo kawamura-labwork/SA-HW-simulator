@@ -20,20 +20,20 @@
 * On the other hand, when switching to check mode by an option `-c`, it works in the same manner as the simulator (2).
 
 ## How to use
-(a) Read in a pre-defined model from a file
+#### (a) Read in a pre-defined model from a file
 ```
 python3 01_SA_simulator_Ising.py -i FILE(.dat) [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d] [-v]
 python3 02_SA_simulator_QUBO.py -i FILE(.dat) [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 python3 03_ConstrainedSA_simulator_QUBO.py -i FILE(.dat) -C FILE(.con) [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
-(b) Generate a random model (Only for the simulators (1) and (2))
+#### (b) Generate a random model
 ```
 python3 01_SA_simulator_Ising.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d] [-v]
 python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
-Model information
+#### Model information
 |Option|Description|Default|Support|
 |:----:|:---------|:-----:|:-----:|
 |`-i`|Model file (Only for (a))|None|ALL|
@@ -42,7 +42,7 @@ Model information
 
 * The simulator (3) always require a pair of model file (.dat) and one-hot constraint file (.con).
 
-Annealing parameters
+#### Annealing parameters
 |Option|Description|Default (Ising model)|Default (QUBO)|
 |:----:|:---------|:-----:|:-----:|
 |`-O`|#. of outer loops|600|100|
@@ -51,7 +51,7 @@ Annealing parameters
 |`-E`|Final temperature|0.5|0.1|
 |`-s`|Seed value|12345|12345|
 
-Other options
+#### Other options
 |Option|Description|Support|
 |:----:|:---------|:-----:|
 |`-d`|Output a log file (`./energy.log`) recording energy transition|ALL|
@@ -59,23 +59,37 @@ Other options
 |`-c`|Switch to check mode which works as typical SA but counts the number of one-hot constraint violations|(3)|
 
 ## Input file format
+
+### Model file
 * The 1st line shows #. of spins.
-* **J** and **h** are specified from the 2nd line (32bit integer)
+* **J** and **h** are specified from the 2nd line (32bit integer).
 * Constant value is specified in the last line.
 
-Example
+#### Example
 ```
-3
+4
 0 0 -1
-0 1 -3
-0 2 -2
+0 1 2
+0 2 1
 1 1 -1
-1 2 -1
+1 3 1
 2 2 -1
-0
+2 3 2
+3 3 -1
 ```
 
 <img width="441" alt="SampleModel" src="https://user-images.githubusercontent.com/71317410/93204943-eb67fa00-f791-11ea-979d-4eff8a8f2568.png">
+
+### One-hot constraint file 
+* The 1st line shows #. of one-hot constraint sets.
+* Pairs of start and end indices are specified from the 2nd line.
+
+#### Example
+```
+2
+0 1
+2 3
+```
 
 ## Output
 Example
