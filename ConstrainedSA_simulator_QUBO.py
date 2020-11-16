@@ -12,17 +12,20 @@ beta_fbit = 27
 random.seed(123) # Seed for generating a random model (not used when using a model file)
 
 logfile = './energy.log'
+varfile = './var.log'
 
 def commandParsing():
 	parser = ArgumentParser()
-	parser.add_argument('-i', '--i_file', help='Model file (A random model is generated when nothing is specified.)')
-	parser.add_argument('-n', '--num', help='#. of spins included in a random model', type=int, default=256)
-	parser.add_argument('-O', '--o_loop', type=int, default=600)
-	parser.add_argument('-I', '--i_loop', type=int, default=4000)
-	parser.add_argument('-S', '--tmp_st', type=float, default=20.0)
-	parser.add_argument('-E', '--tmp_en', type=float, default=0.5)
-	parser.add_argument('-s', '--seed', type=int, default=12345)
-	parser.add_argument('-d', '--debug', help='show process', action='store_true')
+	parser.add_argument('-i', '--i_file', help='Model file', required=True)
+	parser.add_argument('-C', '--c_file', help='One-hot constraint file', required=True)
+	parser.add_argument('-c', '--check' , help='check only', action='store_true')
+	parser.add_argument('-O', '--o_loop', type=int, default=100)
+	parser.add_argument('-I', '--i_loop', type=int, default=1000)
+	parser.add_argument('-S', '--tmp_st', type=float, default=100.0)
+	parser.add_argument('-E', '--tmp_en', type=float, default=0.1)
+	parser.add_argument('-s', '--seed',   type=int, default=12345)
+	parser.add_argument('-d', '--debug',  help='record energy transition', action='store_true')
+	parser.add_argument('-v', '--var',    help='record final state', action='store_true')
 	args = parser.parse_args()
 	return args
 
@@ -111,21 +114,19 @@ def binary_mul(int1, frc1, int2, frc2, ibit, fbit):
 class Model():
 
 	## CONSTRUCTOR ##
-	def __init__(self, file_name, n):
+	def __init__(self, file_name):
 		self.f_str = file_name
-		self.N = n
+		self.N = 0
 		self.J = None
 		self.h = None
+		self.C = 0
 		self.generateModel()
+		self.tbl = None # One-hot table
 		##self.printModel()
 
 	def generateModel(self):
-		if self.f_str is not None:
-			print('Model file:', self.f_str)
-			self.readSpecifiedModel()
-		else:
-			print('Random model is generated')
-			self.generateRandomModel()
+		print('Model file:', self.f_str)
+		self.readSpecifiedModel()
 
 	def printModel(self):
 		print('N =', self.N)
@@ -133,6 +134,8 @@ class Model():
 		print(self.J)
 		print('-- h --')
 		print(self.h)
+		print('-- C --')
+		print(self.C)
 
 	def readSpecifiedModel(self):
 
@@ -151,8 +154,8 @@ class Model():
 		## spin-spin interactions
 		self.J = np.zeros((self.N, self.N), dtype=np.int32)
 		for i in range(int(len(str_list)/3)):
-			x = int(str_list[3*i+1]) - 1
-			y = int(str_list[3*i+2]) - 1
+			x = int(str_list[3*i+1])
+			y = int(str_list[3*i+2])
 			val = int(str_list[3*(i+1)])
 			self.J[x][y] = val
 			self.J[y][x] = val
@@ -163,24 +166,41 @@ class Model():
 			self.h[i] = self.J[i][i]
 			self.J[i][i] = 0
 
-	def generateRandomModel(self):
-
-		## spin-spin interactions
-		self.J = np.zeros((self.N, self.N), dtype=np.int32)
-
-		## magnetic field
-		self.h = np.zeros((self.N,), dtype=np.int32)
-
-		for j in range(self.N):
-			self.h[j] = random.randint(-999, 999) # [-999,999]
-			for i in range(self.N):
-				if j >= i: continue
-				val = random.randint(-99, 99) # [-99, 99]
-				self.J[j][i] = val
-				self.J[i][j] = val
+		## constant value
+		if len(str_list) % 3 == 2:
+			self.C = int(str_list[len(str_list)-1])
 
 	def getModel(self):
-		return self.N, self.J, self.h
+		return self.N, self.J, self.h, self.C
+
+	def getOneHotConstraintTable(self, file_name):
+		if file_name is None:
+			print('One-hot constraint is not specified')
+			sys.exit(1)
+		
+		## READ DATA FILE ##
+		try:
+			with open(file_name) as f:
+				__str = f.read()
+				str_list = __str.split()
+		except IOError:
+			print('ERROR: CANNOT OPEN FILE')
+			sys.exit(1)
+
+		self.tbl = []
+		tbl_size = int(str_list[0])
+		for i in range(tbl_size):
+			st = int(str_list[2*i+1])
+			en = int(str_list[2*i+2])
+			self.tbl.append((st, en))
+
+		self.printOneHotTable()
+
+		return self.tbl
+
+	def printOneHotTable(self):
+		print('One-hot table (size: {0:d})'.format(len(self.tbl)))
+		print(self.tbl)
 
 
 class PiecewiseLinearAppLUT():
@@ -222,10 +242,11 @@ class PiecewiseLinearAppLUT():
 class Annealing():
 
 	## CONSTRUCTOR ##
-	def __init__(self, N, J, h, p, d, la, mu):
+	def __init__(self, N, J, h, C, p, d, v, c, la, mu, tbl):
 		self.N = N
 		self.J = J
 		self.h = h
+		self.C = C
 		self.o_loop = p[0]
 		self.i_loop = p[1]
 		self.tmp_st = p[2]
@@ -233,10 +254,14 @@ class Annealing():
 		self.seed = p[4]
 		self.tmp_delta = pow((self.tmp_en/self.tmp_st), (1./(self.o_loop)))
 		self.debug = d
+		self.var = v
+		self.check = c
 		self.la = la
 		self.mu = mu
-		self.state = np.ones((N,), dtype=np.int32)
-		self.generateRandomState()
+		self.tbl = tbl
+		self.state = np.zeros((N,), dtype=np.int32)
+		if self.check: self.generateRandomState()
+		else: self.generateCustomState()
 		self.local_field = np.dot(self.state, self.J) + self.h
 		self.init_H = 0
 		self.fin_H = 0
@@ -244,12 +269,17 @@ class Annealing():
 	def generateRandomState(self):
 		random.seed(self.seed)
 		for i in range(self.N):
-			self.state[i] = -1 if random.random() < 0.5 else 1
+			self.state[i] = 0 if random.random() < 0.5 else 1
+
+	def generateCustomState(self):
+		tbl_size = len(self.tbl)
+		for i in range(tbl_size):
+			self.state[self.tbl[i][0]] = 1
 
 	def printState(self): print(self.state)
 
 	def calcH(self):
-		energy = -1 * (np.dot(np.dot(self.state, self.J), self.state) // 2 + np.dot(self.h, self.state))
+		energy = np.dot(np.dot(self.state, self.J), self.state) // 2 + np.dot(self.h, self.state) + self.C
 		return energy
 
 	## Random number generator
@@ -289,11 +319,48 @@ class Annealing():
 		str_result_frc = str_result[37:53]
 		return str_result_int, str_result_frc
 
+	def searchOne(self, idx_0):
+		group = -1
+		for i in range(len(self.tbl)):
+			st = self.tbl[i][0]
+			en = self.tbl[i][1]
+			if idx_0 >= st and idx_0 <= en:
+				group = i
+				break
+		if group == -1:
+			print('ONE-HOT SEARCH ERROR:', idx_0)
+			sys.exit(1)
+		idx_1 = -1
+		for i in range(self.tbl[i][0], self.tbl[i][1] + 1):
+			if self.state[i] == 1:
+				idx_1 = i
+				break
+		if idx_1 == -1:
+			print('1\'s STATE SEARCH ERROR')
+			sys.exit(1)
+		return idx_1
+
+	def checkOneHotConstraint(self):
+		check_num = 0
+		for i in range(len(self.tbl)):
+			s = 0
+			for j in range(self.tbl[i][0], self.tbl[i][1] + 1):
+				s += self.state[j]
+			if s != 1:
+				check_num += 1
+		return check_num
+
+	def outputFinState(self):
+		log = open(varfile, mode='w')
+		for i in range(self.N):
+			log.write('{0} {1}\n'.format(i, self.state[i]))
+		log.close()
+
 	def run(self):
 
 		self.init_H = self.calcH()
 
-		beta_int, beta_frc = decimal_to_bin(2./self.tmp_st, beta_ibit, beta_fbit)
+		beta_int, beta_frc = decimal_to_bin(1./self.tmp_st, beta_ibit, beta_fbit)
 		beta_delta_int, beta_delta_frc = decimal_to_bin(1./self.tmp_delta, beta_ibit, beta_fbit)
 		## check
 		beta_tmp_int, beta_tmp_frc = beta_int, beta_frc
@@ -307,7 +374,7 @@ class Annealing():
 		print(' N =', self.N)
 		print(' #Loops  = {0:d} x {1:d}'.format(self.o_loop, self.i_loop))
 		print(' T(set)  = {0} --> {1}'.format(self.tmp_st, self.tmp_en))
-		print(' T(real) = {0} --> {1}'.format(self.tmp_st, 2./beta_tmp_fin))
+		print(' T(real) = {0} --> {1}'.format(self.tmp_st, 1./beta_tmp_fin))
 		print(' seed =', self.seed)
 		print('----------------------------------------')
 
@@ -330,7 +397,17 @@ class Annealing():
 
 				trgt_idx = val_H % self.N
 
-				delta_E = self.local_field[trgt_idx] * self.state[trgt_idx] # delta-E / 2
+				if not self.check and self.state[trgt_idx] == 1: continue
+
+				comp_idx = trgt_idx if self.check else self.searchOne(trgt_idx)
+
+				delta_E = 0 # delta-E
+				if self.check:
+					delta_E += self.local_field[trgt_idx] * (1 - self.state[trgt_idx] * 2)
+				else:
+					delta_E += self.local_field[trgt_idx] * (1 - self.state[trgt_idx] * 2)
+					delta_E += self.local_field[comp_idx] * (1 - self.state[comp_idx] * 2)
+					delta_E -= self.J[trgt_idx][comp_idx]
 				delta_E_sign = -1 if delta_E < 0 else 1
 				delta_E_data = abs(delta_E)
 
@@ -340,12 +417,20 @@ class Annealing():
 
 				y = binary_to_dec(y_frc, '')
 				if y > val_L:
-					self.state[trgt_idx] *= -1 # Update spin
-					self.local_field += 2 * self.J[trgt_idx] * self.state[trgt_idx] # Update local field
+					if self.check:
+						self.local_field += self.J[trgt_idx] * (1 - self.state[trgt_idx] * 2) # Update local field
+						self.state[trgt_idx] = 1 - self.state[trgt_idx] # Update spin
+					else:
+						self.local_field += self.J[trgt_idx] * (1 - self.state[trgt_idx] * 2) # Update local field
+						self.local_field += self.J[comp_idx] * (1 - self.state[comp_idx] * 2) # Update local field
+						self.state[trgt_idx] = 1 - self.state[trgt_idx] # Update spin
+						self.state[comp_idx] = 1 - self.state[comp_idx] # Update spin
 
 			if self.debug:
-				energy = -1 * np.dot(self.local_field + self.h, self.state) // 2
+				energy = np.dot(self.local_field + self.h, self.state) // 2 + self.C
 				log.write('Loop {0:4d}: {1}\n'.format(i, energy))
+
+		if self.debug: log.close()
 
 		self.fin_H = self.calcH()
 
@@ -354,6 +439,10 @@ class Annealing():
 		print('----------------------------------------')
 		print(' H(init) =', self.init_H)
 		print(' H(fin)  =', self.fin_H)
+		if self.var:
+			print(' Output fin state to', varfile)
+			self.outputFinState()
+		print(' #. One-hot constraint violation =', self.checkOneHotConstraint())
 		print('----------------------------------------')
 
 
@@ -362,14 +451,15 @@ def main():
 	args = commandParsing()
 
 	## Set model & params
-	model = Model(args.i_file, args.num)
-	N, J, h = model.getModel()
+	model = Model(args.i_file)
+	tbl = model.getOneHotConstraintTable(args.c_file)
+	N, J, h, C = model.getModel()
 	params = (args.o_loop, args.i_loop, args.tmp_st, args.tmp_en, args.seed)
 
 	lut = PiecewiseLinearAppLUT()
 	la, mu = lut.getTable()
 
-	anneal = Annealing(N, J, h, params, args.debug, la, mu)
+	anneal = Annealing(N, J, h, C, params, args.debug, args.var, args.check, la, mu, tbl)
 	anneal.run()
 
 if __name__ == '__main__':
