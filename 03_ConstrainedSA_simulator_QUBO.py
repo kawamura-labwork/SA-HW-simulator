@@ -442,7 +442,7 @@ class Annealing():
 		if self.var:
 			print(' Output fin state to', varfile)
 			self.outputFinState()
-		print(' #. One-hot constraint violation =', self.checkOneHotConstraint())
+		print(' #. One-hot constraint violations =', self.checkOneHotConstraint())
 		print('----------------------------------------')
 
 
