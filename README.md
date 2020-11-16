@@ -16,7 +16,8 @@
 |(2)|`02_SA_simulator_QUBO.py`|QUBO|Typical SA|
 |(3)|`03_ConstrainedSA_simulator_QUBO.py`|QUBO|Transition-constrained SA|
 
-* The simulator (3), transion-constrained SA, works in such a way as to always satisfy 1-dimensional one-hot constraints, while it works in the same manner as the simulator (2) when switching to check mode by an option `-c`.
+* The simulator (3), transion-constrained SA, works in such a way as to always satisfy 1-dimensional one-hot constraints.
+* On the other hand, when switching to check mode by an option `-c`, it works in the same manner as the simulator (2).
 
 ## How to use
 (a) Read in a pre-defined model from a file
@@ -35,7 +36,7 @@ python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] 
 Model information
 |Option|Description|Default|Support|
 |:----:|:---------|:-----:|:-----:|
-|`-i`|Model file (Only for (a))|None|(1), (2), (3)|
+|`-i`|Model file (Only for (a))|None|ALL|
 |`-C`|One-hot constraint file|None|(3)|
 |`-n`|#. of spins (Only for (b))|256|(1), (2)|
 
@@ -53,24 +54,25 @@ Annealing parameters
 Other options
 |Option|Description|Support|
 |:----:|:---------|:-----:|
-|`-d`|Output a log file (`./energy.log`) recording energy transition|(1), (2), (3)|
-|`-v`|Output a log file (`./var.log`) recording final state|(1), (2), (3)|
+|`-d`|Output a log file (`./energy.log`) recording energy transition|ALL|
+|`-v`|Output a log file (`./var.log`) recording final state|ALL|
 |`-c`|Switch to check mode which works as typical SA but counts the number of one-hot constraint violations|(3)|
 
 ## Input file format
 * The 1st line shows #. of spins.
 * **J** and **h** are specified from the 2nd line (32bit integer)
-* Constant value is not supported.
+* Constant value is specified in the last line.
 
 Example
 ```
 3
+0 0 -1
+0 1 -3
+0 2 -2
 1 1 -1
-1 2 -3
-1 3 -2
+1 2 -1
 2 2 -1
-2 3 -1
-3 3 -1
+0
 ```
 
 <img width="441" alt="SampleModel" src="https://user-images.githubusercontent.com/71317410/93204943-eb67fa00-f791-11ea-979d-4eff8a8f2568.png">
