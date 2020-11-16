@@ -16,7 +16,7 @@
 |(2)|`02_SA_simulator_QUBO.py`|QUBO|Typical SA|
 |(3)|`03_ConstrainedSA_simulator_QUBO.py`|QUBO|Transition-constrained SA|
 
-The **transition-constrained SA** works in such a way as to always satisfy 1-dimensional one-hot constraints
+* The simulator (3), transion-constrained SA, works in such a way as to always satisfy 1-dimensional one-hot constraints, while it works in the same manner as the simulator (2) when switching to check mode by an option `-c`.
 
 ## How to use
 (a) Read in a pre-defined model from a file
@@ -26,31 +26,36 @@ python3 02_SA_simulator_QUBO.py -i FILE(.dat) [-O 100] [-I 1000] [-S 100.0] [-E 
 python3 03_ConstrainedSA_simulator_QUBO.py -i FILE(.dat) -C FILE(.con) [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
-(b) Generate a random model
+(b) Generate a random model (Only for the simulators (1) and (2))
 ```
 python3 01_SA_simulator_Ising.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d] [-v]
 python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
 Model information
-|Option|Description|Default|
-|:----:|:---------:|:-----:|
-|`-i`|Model file (Only for (a))|None|
-|`-n`|#. of spins (Only for (b))|256|
+|Option|Description|Default|Support|
+|:----:|:---------|:-----:|:-----:|
+|`-i`|Model file (Only for (a))|None|(1), (2), (3)|
+|`-C`|One-hot constraint file|None|(3)|
+|`-n`|#. of spins (Only for (b))|256|(1), (2)|
+
+* The simulator (3) always require a pair of model file (.dat) and one-hot constraint file (.con).
 
 Annealing parameters
-|Option|Description|Default|
-|:----:|:---------:|:-----:|
-|`-O`|#. of outer loops|600|
-|`-I`|#. of inner loops|4000|
-|`-S`|Initial temperature|20.0|
-|`-E`|Final temperature|0.5|
-|`-s`|Seed value|12345|
+|Option|Description|Default (Ising model)|Default (QUBO)|
+|:----:|:---------|:-----:|:-----:|
+|`-O`|#. of outer loops|600|100|
+|`-I`|#. of inner loops|4000|1000|
+|`-S`|Initial temperature|20.0|100.0|
+|`-E`|Final temperature|0.5|0.1|
+|`-s`|Seed value|12345|12345|
 
 Other options
-|Option|Description|
-|:----:|:---------:|
-|`-d`|Output a log file (`./energy.log`) recording energy transition|
+|Option|Description|Support|
+|:----:|:---------|:-----:|
+|`-d`|Output a log file (`./energy.log`) recording energy transition|(1), (2), (3)|
+|`-v`|Output a log file (`./var.log`) recording final state|(1), (2), (3)|
+|`-c`|Switch to check mode which works as typical SA but counts the number of one-hot constraint violations|(3)|
 
 ## Input file format
 * The 1st line shows #. of spins.
