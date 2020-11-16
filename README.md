@@ -2,22 +2,34 @@
 **HW (hardware)** simulator of SA (Simulated Annealing)
 
 ## What's this?
-* **SA-based annealer**; ground-state-search processor of a fully-connected Ising model
+* **SA-based annealer**; Ising processor (or QUBO solver) that can address a "fully-connected" model
 * **HW simulator** which imitates the behavior of HW annealer (*now under development*)
 * Including **HW-specific (or HW-friendly) operations** (fixed-point operations, approximated sigmoid operation, and pseudo random number generator)
 
 ## Requirements
 * python3 (numpy, argparse, tqdm)
 
+## Simulator types
+|No.|Name|Input|Algorithm|
+|:----|:---------|:-----|:-----|
+|(1)|`01_SA_simulator_Ising.py`|Ising model|Typical SA|
+|(2)|`02_SA_simulator_QUBO.py`|QUBO|Typical SA|
+|(3)|`03_ConstrainedSA_simulator_QUBO.py`|QUBO|Transition-constrained SA|
+
+The **transition-constrained SA** works in such a way as to always satisfy 1-dimensional one-hot constraints
+
 ## How to use
-(a) Read in an Ising model from a file
+(a) Read in a pre-defined model from a file
 ```
-python3 simulator.py -i FILE [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
+python3 01_SA_simulator_Ising.py -i FILE(.dat) [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d] [-v]
+python3 02_SA_simulator_QUBO.py -i FILE(.dat) [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
+python3 03_ConstrainedSA_simulator_QUBO.py -i FILE(.dat) -C FILE(.con) [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
 (b) Generate a random model
 ```
-python3 simulator.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d]
+python3 01_SA_simulator_Ising.py [-n 256] [-O 600] [-I 4000] [-S 20.0] [-E 0.5] [-s 12345] [-d] [-v]
+python3 02_SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s 12345] [-d] [-v]
 ```
 
 Model information
