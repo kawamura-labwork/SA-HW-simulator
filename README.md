@@ -63,7 +63,7 @@ python3 SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s
 
 ### Model file
 * The 1st line shows #. of spins.
-* **J** and **h** are specified from the 2nd line (32bit integer).
+* Couplings and biases are specified from the 2nd line (32bit integer).
 * Constant value is specified in the last line.
 
 #### Example
@@ -80,6 +80,8 @@ python3 SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s
 2
 ```
 
+<img width="700" alt="sample_model_01" src="https://user-images.githubusercontent.com/71317410/99346344-c0a43a00-28d7-11eb-9733-2a3ff90f9cef.png">
+
 ### One-hot constraint file 
 * The 1st line shows #. of one-hot constraint sets.
 * Pairs of start and end indices are specified from the 2nd line.
@@ -90,6 +92,8 @@ python3 SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s
 0 1
 2 3
 ```
+
+<img width="300" alt="sample_model_02" src="https://user-images.githubusercontent.com/71317410/99346351-c3069400-28d7-11eb-8ecb-fc81756d0696.png">
 
 ## Output examples
 
