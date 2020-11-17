@@ -80,7 +80,7 @@ python3 SA_simulator_QUBO.py [-n 256] [-O 100] [-I 1000] [-S 100.0] [-E 0.1] [-s
 2
 ```
 
-<img width="700" alt="sample_model_01" src="https://user-images.githubusercontent.com/71317410/99346344-c0a43a00-28d7-11eb-9733-2a3ff90f9cef.png">
+<img width="600" alt="sample_model_01" src="https://user-images.githubusercontent.com/71317410/99347463-8c7e4880-28da-11eb-82b2-75db0496599a.png">
 
 ### One-hot constraint file 
 * The 1st line shows #. of one-hot constraint sets.
