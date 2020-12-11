@@ -331,7 +331,7 @@ class Annealing():
 			print('ONE-HOT SEARCH ERROR:', idx_0)
 			sys.exit(1)
 		idx_1 = -1
-		for i in range(self.tbl[i][0], self.tbl[i][1] + 1):
+		for i in range(self.tbl[group][0], self.tbl[group][1] + 1):
 			if self.state[i] == 1:
 				idx_1 = i
 				break
